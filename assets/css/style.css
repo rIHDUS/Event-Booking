@@ -1,143 +1,605 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+/* Base Styles */
+:root {
+    --primary-color: #4a6fa5;
+    --secondary-color: #166088;
+    --accent-color: #4fc3f7;
+    --success-color: #4CAF50;
+    --error-color: #f44336;
+    --warning-color: #ff9800;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --gray-color: #6c757d;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+    background-color: #f5f7fa;
+}
+
+/* Header Styles */
 header {
-    background-color: #f0f0f0;
-    padding: 10px 20px;
+    background-color: white;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
     font-weight: bold;
-    font-size: 1.5em;
+    color: var(--primary-color);
+}
+
+.logo i {
+    margin-right: 0.5rem;
+    font-size: 1.8rem;
+}
+
+nav {
+    display: flex;
+    gap: 1.5rem;
 }
 
 nav a {
-    margin-right: 15px;
     text-decoration: none;
-    color: #333;
+    color: var(--dark-color);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
 }
 
-nav a:hover {
-    color: #000;
-    text-decoration: underline;
+nav a:hover, nav a.active {
+    color: var(--primary-color);
 }
 
+nav a i {
+    font-size: 1.1rem;
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--dark-color);
+    cursor: pointer;
+}
+
+/* Container Styles */
 .container {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
 }
 
-h1 {
-    color: #333;
-    margin-bottom: 20px;
+.booking-section, .events-section {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
 }
 
+h1, h2, h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Calendar Styles */
 .calendar-container {
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
-.calendar-header button {
+.calendar-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.nav-btn {
     background: none;
     border: none;
-    font-size: 1.5em;
+    font-size: 1.2rem;
     cursor: pointer;
-    padding: 0 15px;
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.nav-btn:hover {
+    background-color: rgba(74, 111, 165, 0.1);
 }
 
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .calendar-day-header {
     text-align: center;
     font-weight: bold;
-    padding: 10px;
-    background-color: #eee;
+    padding: 0.5rem;
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
 }
 
 .calendar-day {
-    border: 1px solid #ddd;
-    padding: 10px;
+    border: 1px solid #e9ecef;
+    padding: 0.75rem;
     text-align: center;
-    height: 40px;
-    background-color: #fff;
+    min-height: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius);
     cursor: pointer;
+    transition: var(--transition);
+    position: relative;
 }
 
 .calendar-day:hover {
-    background-color: #f5f5f5;
+    background-color: rgba(74, 111, 165, 0.05);
 }
 
 .calendar-day.empty {
-    background-color: #f9f9f9;
+    background-color: #f8f9fa;
     cursor: default;
 }
 
+.calendar-day.available {
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.calendar-day.booked {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--gray-color);
+    cursor: not-allowed;
+}
+
 .calendar-day.selected {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     color: white;
+    font-weight: bold;
+}
+
+.calendar-day.today {
+    border: 2px solid var(--accent-color);
+}
+
+.calendar-day .event-indicator {
+    width: 6px;
+    height: 6px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    margin-top: 0.25rem;
+}
+
+.calendar-day.booked .event-indicator {
+    background-color: var(--error-color);
+}
+
+.calendar-day.selected .event-indicator {
+    background-color: white;
+}
+
+.calendar-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.legend {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+.legend span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.legend i {
+    font-size: 0.8rem;
+}
+
+.available i {
+    color: var(--success-color);
+}
+
+.booked i {
+    color: var(--error-color);
+}
+
+.selected-legend i {
+    color: var(--primary-color);
+}
+
+/* Form Styles */
+.booking-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #555;
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-input, textarea {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
+.form-group label i {
+    color: var(--primary-color);
+    width: 1.2rem;
 }
 
-input:focus, textarea:focus {
+input, select, textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(74, 111, 165, 0.25);
 }
 
-button[type="submit"] {
-    background-color: #4CAF50;
+.error-message {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    height: 0.8rem;
+}
+
+.submit-btn {
+    background-color: var(--primary-color);
     color: white;
-    padding: 12px 20px;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
-button[type="submit"]:hover {
-    background-color: #45a049;
+.submit-btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
 }
 
-h3 {
-    margin-top: 30px;
-    color: #333;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+/* Events Section Styles */
+.events-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
+
+.event-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    border: 1px solid #e9ecef;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.event-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.event-date {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.event-month {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.event-body {
+    padding: 1.5rem;
+}
+
+.event-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.event-details {
+    color: var(--gray-color);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.event-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.event-meta i {
+    color: var(--primary-color);
+    width: 1rem;
+}
+
+.event-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: rgba(74, 111, 165, 0.1);
+}
+
+/* Modal Styles */
+.confirmation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--gray-color);
+}
+
+.modal-icon {
+    font-size: 3rem;
+    color: var(--success-color);
+    margin-bottom: 1rem;
+}
+
+.modal-content h3 {
+    margin-bottom: 1rem;
+    justify-content: center;
+}
+
+.modal-content p {
+    margin-bottom: 1.5rem;
+    color: var(--gray-color);
+}
+
+.modal-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    margin: 0 auto;
+}
+
+.modal-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Footer Styles */
+footer {
+    background-color: var(--dark-color);
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-links a {
+    color: white;
+    font-size: 1.2rem;
+    transition: var(--transition);
+}
+
+.social-links a:hover {
+    color: var(--accent-color);
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: 1rem;
+    }
+    
+    nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: var(--box-shadow);
+        z-index: 99;
+    }
+    
+    nav.active {
+        display: flex;
+    }
+    
+    nav a {
+        padding: 0.75rem 1rem;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .calendar-day {
+        padding: 0.5rem;
+        min-height: 2.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-section, .events-section {
+        padding: 1.5rem;
+    }
+    
+    .legend {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .events-list {
+        grid-template-columns: 1fr;
+    }
+}
+/* New side-by-side calendar + form layout */
+.booking-content {
+    display: grid;
+    grid-template-columns: 3fr 3fr;
+    gap: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .booking-content {
+      grid-template-columns: 1fr;
+    }
+  }
+  
