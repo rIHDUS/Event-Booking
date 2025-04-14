@@ -590,11 +590,12 @@ footer {
         grid-template-columns: 1fr;
     }
 }
-/* New side-by-side calendar + form layout */
+/* Calendar + Form side-by-side layout */
 .booking-content {
     display: grid;
-    grid-template-columns: 3fr 3fr;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
+    align-items: start;
   }
   
   @media (max-width: 768px) {
@@ -602,4 +603,5 @@ footer {
       grid-template-columns: 1fr;
     }
   }
+  
   
