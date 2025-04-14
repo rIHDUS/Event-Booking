@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
     const calendarEl = document.getElementById('calendar');
     const currentMonthEl = document.getElementById('current-month');
     const prevMonthBtn = document.getElementById('prev-month');
@@ -12,36 +11,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmationMessage = document.getElementById('confirmation-message');
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('nav');
+    const userEventsList = document.getElementById('user-events-list');
 
-    const sampleEvents = [
-        {
-            id: 1,
-            title: "Team Meeting",
-            date: new Date(2024, 1, 15)
-        },
-        {
-            id: 2,
-            title: "Product Launch",
-            date: new Date(2024, 1, 20)
-        },
-        {
-            id: 3,
-            title: "Birthday Party",
-            date: new Date(2024, 1, 25)
-        }
-    ];
-
-    const bookedDates = sampleEvents.map(event => event.date.getDate());
     let currentDate = new Date();
     let selectedDate = null;
 
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     function init() {
         renderCalendar();
         setupEventListeners();
+        renderUserEvents();
     }
 
     function renderCalendar() {
@@ -58,11 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         const daysInMonth = lastDay.getDate();
         const startingDay = firstDay.getDay();
-
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const isCurrentMonth = currentDate.getMonth() === today.getMonth() &&
-            currentDate.getFullYear() === today.getFullYear();
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
 
         for (let i = 0; i < startingDay; i++) {
             const emptyDay = document.createElement('div');
@@ -74,13 +53,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
             dayElement.textContent = day;
-
             const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
 
-            if (isCurrentMonth && day === today.getDate()) {
+            if (currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear() && day === today.getDate()) {
                 dayElement.classList.add('today');
             }
-            if (bookedDates.includes(day)) {
+
+            const isBooked = bookings.some(b => new Date(b.date).toDateString() === clickedDate.toDateString());
+
+            if (isBooked) {
                 dayElement.classList.add('booked');
                 const indicator = document.createElement('div');
                 indicator.className = 'event-indicator';
@@ -89,14 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 dayElement.classList.add('available');
             }
 
-            if (selectedDate &&
-                selectedDate.getDate() === day &&
-                selectedDate.getMonth() === currentDate.getMonth() &&
-                selectedDate.getFullYear() === currentDate.getFullYear()) {
+            if (selectedDate && selectedDate.toDateString() === clickedDate.toDateString()) {
                 dayElement.classList.add('selected');
             }
 
-            dayElement.addEventListener('click', function () {
+            dayElement.addEventListener('click', () => {
                 if (dayElement.classList.contains('booked')) return;
                 if (clickedDate < today) {
                     alert("You cannot select a past date. Please choose a future date.");
@@ -114,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function validateForm() {
         let isValid = true;
-
         const name = document.getElementById('name').value.trim();
         if (name === '') {
             document.getElementById('name-error').textContent = 'Name is required';
@@ -152,12 +129,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showConfirmation(name, date, eventType) {
-        const formattedDate = date.toLocaleDateString('en-US', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
+        const formattedDate = date.toDateString();
         confirmationMessage.textContent = `Thank you, ${name}! Your ${eventType} has been booked for ${formattedDate}.`;
         confirmationModal.style.display = 'flex';
     }
+
+    function renderUserEvents() {
+        if (!userEventsList) return;
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        userEventsList.innerHTML = '';
+
+        if (bookings.length === 0) {
+            userEventsList.innerHTML = '<p>No events booked yet.</p>';
+            return;
+        }
+
+        bookings.forEach((booking, index) => {
+            const card = document.createElement('div');
+            card.className = 'event-card';
+            card.innerHTML = `
+                <div class="event-body">
+                    <h3 class="event-title">${booking.eventType}</h3>
+                    <p><strong>Name:</strong> ${booking.name}</p>
+                    <p><strong>Date:</strong> ${booking.date}</p>
+                    <button class="btn btn-danger" onclick="deleteUserEvent(${index})"><i class="fas fa-trash"></i> Delete</button>
+                </div>`;
+            userEventsList.appendChild(card);
+        });
+    }
+
+    window.deleteUserEvent = function(index) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        bookings.splice(index, 1);
+        localStorage.setItem('bookings', JSON.stringify(bookings));
+        renderCalendar();
+        renderUserEvents();
+    };
 
     function setupEventListeners() {
         prevMonthBtn.addEventListener('click', () => {
@@ -174,7 +181,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (validateForm()) {
                 const name = document.getElementById('name').value.trim();
                 const eventType = document.getElementById('event-type').value;
+                const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+                bookings.push({ name, eventType, date: selectedDate.toDateString() });
+                localStorage.setItem('bookings', JSON.stringify(bookings));
                 showConfirmation(name, selectedDate, eventType);
+                renderCalendar();
+                renderUserEvents();
                 bookingForm.reset();
                 selectedDate = null;
                 selectedDateInput.value = '';
@@ -182,26 +194,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        closeModalBtn.addEventListener('click', () => {
-            confirmationModal.style.display = 'none';
-        });
-        closeConfirmationBtn.addEventListener('click', () => {
-            confirmationModal.style.display = 'none';
-        });
+        closeModalBtn.addEventListener('click', () => confirmationModal.style.display = 'none');
+        closeConfirmationBtn.addEventListener('click', () => confirmationModal.style.display = 'none');
         confirmationModal.addEventListener('click', e => {
-            if (e.target === confirmationModal) {
-                confirmationModal.style.display = 'none';
-            }
+            if (e.target === confirmationModal) confirmationModal.style.display = 'none';
         });
 
-        mobileMenuBtn.addEventListener('click', () => {
-            nav.classList.toggle('active');
-        });
-        document.querySelectorAll('nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                nav.classList.remove('active');
-            });
-        });
+        mobileMenuBtn.addEventListener('click', () => nav.classList.toggle('active'));
+        document.querySelectorAll('nav a').forEach(link => link.addEventListener('click', () => nav.classList.remove('active')));
     }
 
     init();

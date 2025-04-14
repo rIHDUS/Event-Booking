@@ -603,5 +603,18 @@ footer {
       grid-template-columns: 1fr;
     }
   }
+  .btn-danger {
+    background: #e74c3c;
+    color: #fff;
+    padding: 0.5rem 0.8rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
   
+  .btn-danger:hover {
+    background: #c0392b;
+  }
+    
   
